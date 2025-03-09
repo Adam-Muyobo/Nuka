@@ -122,7 +122,7 @@ We welcome contributions! To contribute:
 ---
 ## **📞 Contact**
 For any inquiries or support, reach out via:
-- 📧 Email: [your-email@example.com](mailto:your-email@example.com)
-- 🌐 Website: [yourwebsite.com](https://yourwebsite.com)
+- 📧 Personal Email: muyoboadam@gmail.com
+- 📧 School Email: 202104060@ub.ac.bw
 
 Happy Coding! 🎉
