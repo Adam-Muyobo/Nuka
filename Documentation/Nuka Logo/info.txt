@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: LeagueSpartan-Bold
+font link: https://www.theleagueofmoveabletype.com/league-spartan
+font author: The League of Moveable Type
+font author site: https://www.theleagueofmoveabletype.com/
+Slogan Font: Snickles.ttf
+
+icon designer: useiconic.com
+icon designer link: /useiconic.com
+        
+{"bg":"transparent","icon-gradient-0":"#3C1143","icon-gradient-1":"#C25178","font":"#000000","slogan":"#141414"}
+      
