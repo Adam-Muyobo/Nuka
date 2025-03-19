@@ -26,6 +26,11 @@ public class UserService {
         return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
     }
 
+    public User collectUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+    }
+
     // Method to get all users
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();

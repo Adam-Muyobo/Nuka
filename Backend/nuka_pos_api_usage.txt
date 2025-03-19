@@ -1,0 +1,75 @@
+
+Nuka POS API Usage Guide
+
+1. Base URL:
+   The base URL for the API is: http://localhost:8080/api
+
+2. Authentication:
+   No authentication is required for the API as of now.
+
+3. Endpoints:
+
+   a. Users:
+      - POST /users: Create a new user.
+      - GET /users/{id}: Retrieve user details by user ID.
+      - PUT /users/{id}: Update user details by user ID.
+      - DELETE /users/{id}: Delete user by user ID.
+   
+   b. Products:
+      - POST /products: Create a new product.
+      - GET /products/{id}: Retrieve product details by product ID.
+      - PUT /products/{id}: Update product details by product ID.
+      - DELETE /products/{id}: Delete product by product ID.
+
+   c. Transactions:
+      - POST /transactions: Create a new transaction.
+      - GET /transactions/{id}: Retrieve transaction details by transaction ID.
+
+   d. Transaction Items:
+      - POST /transactions-items: Add item to a transaction.
+   
+   e. Payments:
+      - POST /payments: Create a new payment for a transaction.
+
+   f. Tax Records:
+      - POST /tax-records: Create a new tax record for a transaction.
+   
+4. Example Request Body for User:
+   {
+     "name": "John Doe",
+     "email": "john.doe@example.com",
+     "phoneNumber": "123-456-7890"
+   }
+
+5. Example Response Body for User:
+   {
+     "id": 1,
+     "name": "John Doe",
+     "email": "john.doe@example.com",
+     "phoneNumber": "123-456-7890"
+   }
+
+6. Example Request for Creating a Transaction:
+   POST /transactions
+   Request Body:
+   {
+     "userId": 1,
+     "totalAmount": 100.50,
+     "taxAmount": 10.50
+   }
+
+7. Example Response for Creating a Transaction:
+   {
+     "id": 1,
+     "userId": 1,
+     "totalAmount": 100.50,
+     "taxAmount": 10.50,
+     "timestamp": "2025-03-19T12:00:00"
+   }
+
+8. Notes:
+   - All endpoints that accept data require JSON formatted request bodies.
+   - Responses are also in JSON format.
+   - For testing purposes, use tools like Postman or cURL to interact with the API.
+
+For more details, please refer to the OpenAPI Specification.
