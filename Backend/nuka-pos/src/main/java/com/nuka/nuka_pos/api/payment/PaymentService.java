@@ -40,7 +40,7 @@ public class PaymentService {
     @Transactional
     public Payment updatePaymentStatus(Long paymentId, PaymentStatus status) {
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
 
         payment.setStatus(status);
         return paymentRepository.save(payment);
@@ -50,7 +50,7 @@ public class PaymentService {
     @Transactional
     public void deletePayment(Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
 
         paymentRepository.delete(payment);
     }
@@ -58,7 +58,7 @@ public class PaymentService {
     // Get Payment by ID
     public Payment findById(Long id) {
         return paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() -> new PaymentNotFoundException(id));
     }
 
     // Get All Payments

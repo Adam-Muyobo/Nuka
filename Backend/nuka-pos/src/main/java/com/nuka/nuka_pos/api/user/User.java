@@ -1,5 +1,6 @@
 package com.nuka.nuka_pos.api.user;
 
+import com.nuka.nuka_pos.api.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

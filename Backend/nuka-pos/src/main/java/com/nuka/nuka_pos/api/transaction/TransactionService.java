@@ -58,13 +58,13 @@ public class TransactionService {
     @Transactional
     public void deleteTransaction(Long id) {
         var transaction = transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new TransactionNotFoundException(id));
         transactionRepository.delete(transaction);
     }
 
     public Transaction findById(Long id) {
         return transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new TransactionNotFoundException(id));
     }
 
     public List<Transaction> findAll() {

@@ -1,8 +1,8 @@
 package com.nuka.nuka_pos.api.user;
 
+import com.nuka.nuka_pos.api.user.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

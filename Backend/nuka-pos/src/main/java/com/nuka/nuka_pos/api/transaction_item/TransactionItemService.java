@@ -1,8 +1,10 @@
 package com.nuka.nuka_pos.api.transaction_item;
 
 import com.nuka.nuka_pos.api.product.Product;
+import com.nuka.nuka_pos.api.product.ProductNotFoundException;
 import com.nuka.nuka_pos.api.product.ProductRepository;
 import com.nuka.nuka_pos.api.transaction.Transaction;
+import com.nuka.nuka_pos.api.transaction.TransactionNotFoundException;
 import com.nuka.nuka_pos.api.transaction.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,13 +48,13 @@ public class TransactionItemService {
     // Update Transaction Item
     public TransactionItem updateTransactionItem(Long id, TransactionItemRequest request) {
         TransactionItem transactionItem = transactionItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction Item not found"));
+                .orElseThrow(() -> new TransactionItemNotFoundException(id));
 
         Transaction transaction = transactionRepository.findById(request.getTransactionId())
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new TransactionNotFoundException(request.getTransactionId()));
 
         Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         transactionItem.setTransaction(transaction);
         transactionItem.setProduct(product);
@@ -65,14 +67,14 @@ public class TransactionItemService {
     // Delete Transaction Item
     public void deleteTransactionItem(Long id) {
         TransactionItem transactionItem = transactionItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction Item not found"));
+                .orElseThrow(() -> new TransactionItemNotFoundException(id));
         transactionItemRepository.delete(transactionItem);
     }
 
     // Find Transaction Item by ID
     public TransactionItem findById(Long id) {
         return transactionItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction Item not found"));
+                .orElseThrow(() -> new TransactionItemNotFoundException(id));
     }
 
     // Get All Transaction Items

@@ -38,7 +38,7 @@ public class TaxRecordService {
     @Transactional
     public TaxRecord updateTaxRecord(Long id, Long transactionId, BigDecimal vatAmount, Boolean submittedToZRA) {
         TaxRecord taxRecord = taxRecordRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tax record not found"));
+                .orElseThrow(() -> new TaxRecordNotFoundException(id));
 
         Transaction transaction = transactionService.findById(transactionId);
 
@@ -53,7 +53,7 @@ public class TaxRecordService {
     @Transactional
     public void deleteTaxRecord(Long id) {
         TaxRecord taxRecord = taxRecordRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tax record not found"));
+                .orElseThrow(() -> new TaxRecordNotFoundException(id));
 
         taxRecordRepository.delete(taxRecord);
     }
@@ -61,7 +61,7 @@ public class TaxRecordService {
     // Find Tax Record by ID
     public TaxRecord findById(Long id) {
         return taxRecordRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tax record not found"));
+                .orElseThrow(() -> new TaxRecordNotFoundException(id));
     }
 
     // Get All Tax Records
