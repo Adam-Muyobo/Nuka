@@ -2,6 +2,7 @@ package com.nuka.nuka_pos.api.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,37 +12,47 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
+
+
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Endpoint to create a new user
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody User user) {
-        UserDTO userDTO = userService.createUser(user);
-        return new ResponseEntity<>(userDTO, HttpStatus.CREATED);
+    public ResponseEntity<User> createUser(@RequestBody UserRequest request) {
+        User user = new User();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
+        userService.createUser(user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
     // Endpoint to get a user by ID
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        UserDTO userDTO = userService.getUserById(id);
-        return new ResponseEntity<>(userDTO, HttpStatus.OK);
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     // Endpoint to get all users
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     // Endpoint to update a user
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User user) {
-        UserDTO updatedUserDTO = userService.updateUser(id, user);
-        return new ResponseEntity<>(updatedUserDTO, HttpStatus.OK);
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User request) {
+        User user = userService.updateUser(id, request);
+        return new ResponseEntity<>(user , HttpStatus.OK);
     }
 
     // Endpoint to delete a user

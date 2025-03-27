@@ -5,7 +5,9 @@ Nuka POS API Usage Guide
    The base URL for the API is: http://localhost:8080/api
 
 2. Authentication:
-   No authentication is required for the API as of now.
+   The API uses JWT (JSON Web Token) authentication for all endpoints.
+   - POST /auth/login: Log in with email and password to receive a JWT token.
+   - POST /auth/signup: Sign up to create an Admin account with firstname, lastname, email, and password.
 
 3. Endpoints:
 
@@ -33,43 +35,39 @@ Nuka POS API Usage Guide
 
    f. Tax Records:
       - POST /tax-records: Create a new tax record for a transaction.
-   
-4. Example Request Body for User:
-   {
-     "name": "John Doe",
-     "email": "john.doe@example.com",
-     "phoneNumber": "123-456-7890"
-   }
 
-5. Example Response Body for User:
-   {
-     "id": 1,
-     "name": "John Doe",
-     "email": "john.doe@example.com",
-     "phoneNumber": "123-456-7890"
-   }
+4. Authentication Example Requests:
 
-6. Example Request for Creating a Transaction:
-   POST /transactions
+   a. Login (POST /auth/login)
    Request Body:
    {
-     "userId": 1,
-     "totalAmount": 100.50,
-     "taxAmount": 10.50
+     "email": "john.doe@example.com",
+     "password": "password123"
    }
 
-7. Example Response for Creating a Transaction:
+   Response:
    {
-     "id": 1,
-     "userId": 1,
-     "totalAmount": 100.50,
-     "taxAmount": 10.50,
-     "timestamp": "2025-03-19T12:00:00"
+     "token": "your_jwt_token_here"
    }
 
-8. Notes:
+   b. Sign Up (POST /auth/signup)
+   Request Body:
+   {
+     "firstName": "John",
+     "lastName": "Doe",
+     "email": "john.doe@example.com",
+     "password": "password123"
+   }
+
+   Response:
+   {
+     "message": "Admin user created successfully."
+   }
+
+9. Notes:
    - All endpoints that accept data require JSON formatted request bodies.
    - Responses are also in JSON format.
+   - JWT token must be included in the Authorization header of requests to protected endpoints (e.g., Authorization: Bearer your_jwt_token_here).
    - For testing purposes, use tools like Postman or cURL to interact with the API.
 
 For more details, please refer to the OpenAPI Specification.
