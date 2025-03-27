@@ -23,7 +23,7 @@ public class TransactionService {
 
     @Transactional
     public Transaction createTransaction(Long userId, BigDecimal totalAmount, BigDecimal taxAmount) {
-        var user = userService.collectUserById(userId);
+        var user = userService.getUserById(userId);
         if (user == null) {
             throw new RuntimeException("User not found");
         }
@@ -42,7 +42,7 @@ public class TransactionService {
         var transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
-        var user = userService.collectUserById(userId);
+        var user = userService.getUserById(userId);
         if (user == null) {
             throw new RuntimeException("User not found");
         }

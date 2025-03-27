@@ -14,33 +14,23 @@ public class UserService {
     }
 
     // Method to create a new user
-    public UserDTO createUser(User user) {
-        User savedUser = userRepository.save(user);
-        return new UserDTO(savedUser.getId(), savedUser.getFirstName(), savedUser.getLastName(),savedUser.getEmail(), savedUser.getRole());
+    public void createUser(User user) {
+        userRepository.save(user);
     }
 
     // Method to find a user by ID
-    public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
-        return new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole());
-    }
-
-    public User collectUserById(Long id) {
+    public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
     }
 
     // Method to get all users
-    public List<UserDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(user -> new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getRole()))
-                .toList();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     // Method to update a user
-    public UserDTO updateUser(Long id, User updatedUser) {
+    public User updateUser(Long id, User updatedUser) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
 
@@ -49,8 +39,7 @@ public class UserService {
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setRole(updatedUser.getRole());
 
-        User savedUser = userRepository.save(existingUser);
-        return new UserDTO(savedUser.getId(), savedUser.getFirstName(),savedUser.getLastName(), savedUser.getEmail(), savedUser.getRole());
+        return userRepository.save(existingUser);
     }
 
     // Method to delete a user

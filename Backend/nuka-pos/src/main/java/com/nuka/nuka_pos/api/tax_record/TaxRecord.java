@@ -19,7 +19,7 @@ public class TaxRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transaction_id", nullable = false)
     @JsonIgnore
     private Transaction transaction;
