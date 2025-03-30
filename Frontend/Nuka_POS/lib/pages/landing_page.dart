@@ -1,153 +1,104 @@
 import 'package:flutter/material.dart';
+import 'package:nuka_pos/pages/auth/login_page.dart';
+import 'package:nuka_pos/pages/auth/signup_page.dart';
 
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'admin_dashboard.dart';
-import 'cashier_dashboard.dart';
-
-class LandingPage extends StatefulWidget {
-  @override
-  _LandingPageState createState() => _LandingPageState();
-}
-
-class _LandingPageState extends State<LandingPage> {
-  bool isLogin = true; // Toggle between Login and Sign-Up
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-
-  Future<void> login() async {
-    final url = Uri.parse('http://localhost:8080/api/users/email/${emailController.text}');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final user = jsonDecode(response.body);
-
-      if (user['password'] == passwordController.text) { // Replace with hash comparison if needed
-        String role = user['role'];
-
-        if (role == 'ADMIN') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => AdminDashboard()));
-        } else if (role == 'CASHIER') {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CashierDashboard()));
-        } else {
-          showError('Unknown role: $role');
-        }
-      } else {
-        showError('Incorrect password');
-      }
-    } else {
-      showError('User not found');
-    }
-  }
-
-  Future<void> signUp() async {
-    final url = Uri.parse('http://localhost:8080/api/users');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': nameController.text,
-        'email': emailController.text,
-        'password': passwordController.text, // Store securely in real app
-        'role': 'ADMIN', // Only Admins can be created via Sign-Up
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      setState(() => isLogin = true); // Switch to login after successful sign-up
-    } else {
-      showError('Sign-up failed');
-    }
-  }
-
-  void showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
-    );
-  }
+class LandingPage extends StatelessWidget {
+  const LandingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          bool isWideScreen = constraints.maxWidth > 800;
-
-          return Center(
+      body: Stack(
+        children: [
+          // Semi-transparent overlay
+          Positioned.fill(
             child: Container(
-              padding: EdgeInsets.all(20),
-              width: isWideScreen ? 800 : double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Nuka POS System', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-
-                  SizedBox(height: 20),
-
-                  isWideScreen
-                      ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildLoginContainer(),
-                      _buildSignupContainer(),
-                    ],
-                  )
-                      : Column(
-                    children: [
-                      _buildLoginContainer(),
-                      SizedBox(height: 20),
-                      _buildSignupContainer(),
-                    ],
-                  ),
-                ],
+              color: Colors.black.withOpacity(0.5),
+            ),
+          ),
+          // Content Section
+          Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Logo
+                    Image.asset(
+                      'images/nuka_logo.png',
+                      width: 150,
+                      height: 150,
+                    ),
+                    const SizedBox(height: 20),
+                    // Description Text
+                    const Text(
+                      'Nuka POS: A Point of Sale system for managing sales, transactions, and payments.',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 30),
+                    // Login Button
+                    ElevatedButton(
+                      onPressed: () {
+                        // Navigate to Login Page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(MediaQuery.of(context).size.width * 0.6, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Login',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Signup Button
+                    ElevatedButton(
+                      onPressed: () {
+                        // Navigate to Signup Page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SignupPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(MediaQuery.of(context).size.width * 0.6, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Sign Up',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    // Footer Section
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 20.0),
+                      child: Text(
+                        '© 2025 Nuka POS. All rights reserved.',
+                        style: TextStyle(color: Colors.white, fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildLoginContainer() {
-    return Expanded(
-      child: Card(
-        elevation: 5,
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Text('Login', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              TextField(controller: emailController, decoration: InputDecoration(labelText: 'Email')),
-              TextField(controller: passwordController, decoration: InputDecoration(labelText: 'Password'), obscureText: true),
-              SizedBox(height: 10),
-              ElevatedButton(onPressed: login, child: Text('Login')),
-            ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSignupContainer() {
-    return Expanded(
-      child: Card(
-        elevation: 5,
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Text('Sign Up (Admins Only)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              TextField(controller: nameController, decoration: InputDecoration(labelText: 'Name')),
-              TextField(controller: emailController, decoration: InputDecoration(labelText: 'Email')),
-              TextField(controller: passwordController, decoration: InputDecoration(labelText: 'Password'), obscureText: true),
-              SizedBox(height: 10),
-              ElevatedButton(onPressed: signUp, child: Text('Sign Up')),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
 }
-
