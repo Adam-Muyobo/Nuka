@@ -2,7 +2,7 @@
 
 **A smart, tax-compliant Point of Sale (POS) system for businesses in Zambia**
 
-![Nuka] ![default](https://github.com/user-attachments/assets/99e1afcc-5ba1-47a6-8f1c-38a8cb0f4ffd)
+![default](https://github.com/user-attachments/assets/99e1afcc-5ba1-47a6-8f1c-38a8cb0f4ffd)
 
 
 ## **📌 Overview**
