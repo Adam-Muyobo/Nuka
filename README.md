@@ -3,11 +3,10 @@
 **A smart, tax-compliant Point of Sale (POS) system for businesses in Zambia**
 ![default](https://github.com/user-attachments/assets/99e1afcc-5ba1-47a6-8f1c-38a8cb0f4ffd)
 
-
 ## **📌 Overview**
 Nuka is a **modern and efficient Point of Sale system** designed for **small businesses and enterprises in Zambia**. It simplifies **sales tracking, tax compliance, and financial reporting** by integrating with the **ZRA Smart Invoicing API**. 
 
-> **This project is developed as a final year Computer Science project.**
+**This project is developed as a final year Computer Science project.**
 
 ### **✨ Key Features**
 - 📷 **Barcode Scanning** (via phone camera)
