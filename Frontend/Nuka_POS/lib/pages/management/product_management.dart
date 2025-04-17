@@ -44,7 +44,7 @@ class ProductManagementPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text('Product $index'),
-                  subtitle: Text('\$${(index + 1) * 10}'),
+                  subtitle: Text('\P${(index + 1) * 10}'),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: () {},

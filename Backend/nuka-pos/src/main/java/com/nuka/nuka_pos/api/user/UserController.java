@@ -2,7 +2,6 @@ package com.nuka.nuka_pos.api.user;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,53 +11,46 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
-
-
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    // Endpoint to create a new user
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody UserRequest request) {
-        User user = new User();
-        user.setFirstName(request.getFirstName());
-        user.setLastName(request.getLastName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
-        userService.createUser(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-    }
-
-    // Endpoint to get a user by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    // Endpoint to get all users
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public List<UserResponse> getAllUsers() {
+        return userService.getAllUsers();
     }
 
-    // Endpoint to update a user
+    @GetMapping("/{id}")
+    public UserResponse getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    @PostMapping
+    public ResponseEntity<String> createUser(@RequestBody User user) {
+        userService.createUser(user);
+        return new ResponseEntity<>("User created successfully", HttpStatus.CREATED);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User request) {
-        User user = userService.updateUser(id, request);
-        return new ResponseEntity<>(user , HttpStatus.OK);
+    public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User user) {
+        userService.updateUser(id, user);
+        return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
     }
 
-    // Endpoint to delete a user
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/organization/{organizationId}")
+    public List<UserResponse> getUsersByOrganization(@PathVariable Long organizationId) {
+        return userService.getUsersByOrganization(organizationId);
+    }
+
+    @GetMapping("/branch/{branchId}")
+    public List<UserResponse> getUsersByBranch(@PathVariable Long branchId) {
+        return userService.getUsersByBranch(branchId);
     }
 }

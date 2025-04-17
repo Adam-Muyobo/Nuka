@@ -1,58 +1,82 @@
 package com.nuka.nuka_pos.api.user;
 
-import com.nuka.nuka_pos.api.user.enums.Role;
+import com.nuka.nuka_pos.api.branch.Branch;
+import com.nuka.nuka_pos.api.organization.Organization;
+import com.nuka.nuka_pos.api.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Entity representing a User in the system.
+ */
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String firstName;
+    @Column(nullable = false, unique = true)
+    private String username;
 
     @Column(nullable = false)
-    private String lastName;
+    private String password;
+
+    @Column(nullable = false)
+    private String forenames;
+
+    @Column(nullable = false)
+    private String surname;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    private String password;
+    private String phone;
 
-    @Enumerated(EnumType.STRING)
+    private String profilePicture;
+
     @Column(nullable = false)
+    private Boolean isActive = true;
+
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "organization_id", nullable = false)
+    private Organization organization;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    // Implemented methods from UserDetails
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.toString()));
-    }
+    @ManyToOne
+    @JoinColumn(name = "branch_id")
+    private Branch branch;
 
     @Override
     public String getUsername() {
-        return email;  // Spring Security uses this as the identifier
+        return username;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(() -> role.getName()); // Simplified authority
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return Boolean.TRUE.equals(isActive);
     }
 
     @Override
@@ -67,6 +91,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return Boolean.TRUE.equals(isActive);
     }
 }

@@ -2,75 +2,91 @@ package com.nuka.nuka_pos.api.payment;
 
 import com.nuka.nuka_pos.api.payment.enums.PaymentMethod;
 import com.nuka.nuka_pos.api.payment.enums.PaymentStatus;
-import com.nuka.nuka_pos.api.transaction.Transaction;
-import com.nuka.nuka_pos.api.transaction.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nuka.nuka_pos.api.payment.exceptions.PaymentNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final TransactionService transactionService;
 
-    @Autowired
-    public PaymentService(PaymentRepository paymentRepository, TransactionService transactionService) {
+    public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
-        this.transactionService = transactionService;
     }
 
-    // Add Payment
-    @Transactional
-    public Payment createPayment(Long transactionId, PaymentMethod paymentMethod) {
-        Transaction transaction = transactionService.findById(transactionId);
-
-        Payment payment = Payment.builder()
-                .transaction(transaction)
-                .paymentMethod(paymentMethod)
-                .status(PaymentStatus.PENDING) // Default status
-                .build();
-
-        return paymentRepository.save(payment);
+    public List<PaymentResponse> getAllPayments() {
+        return paymentRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    // Update Payment Status
-    @Transactional
-    public Payment updatePaymentStatus(Long paymentId, PaymentStatus status) {
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
-
-        payment.setStatus(status);
-        return paymentRepository.save(payment);
+    public PaymentResponse getPaymentById(Long id) {
+        Payment payment = paymentRepository.findById(id)
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found with id: " + id));
+        return mapToResponse(payment);
     }
 
-    // Delete Payment
-    @Transactional
-    public void deletePayment(Long paymentId) {
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
-
-        paymentRepository.delete(payment);
+    public List<PaymentResponse> getPaymentsByStatus(PaymentStatus status) {
+        return paymentRepository.findByStatus(status)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    // Get Payment by ID
-    public Payment findById(Long id) {
-        return paymentRepository.findById(id)
-                .orElseThrow(() -> new PaymentNotFoundException(id));
+    public List<PaymentResponse> getPaymentsByPaymentMethod(PaymentMethod method) {
+        return paymentRepository.findByPaymentMethod(method)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    // Get All Payments
-    public List<Payment> findAll() {
-        return paymentRepository.findAll();
+    public List<PaymentResponse> getPaymentsBySaleId(Long saleId) {
+        return paymentRepository.findBySaleId(saleId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 
-    // Get Payments by Transaction ID
-    public Payment findByTransactionId(Long transactionId) {
-        return paymentRepository.findByTransaction_Id(transactionId)
-                .orElseThrow(() -> new RuntimeException("Payment not found for transaction"));
+    public void createPayment(Payment payment) {
+        paymentRepository.save(payment);
+    }
+
+    public void updatePayment(Long id, Payment updatedData) {
+        Payment existing = paymentRepository.findById(id)
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found with id: " + id));
+
+        if (updatedData.getAmount() != null) existing.setAmount(updatedData.getAmount());
+        if (updatedData.getPaymentDate() != null) existing.setPaymentDate(updatedData.getPaymentDate());
+        if (updatedData.getPaymentMethod() != null) existing.setPaymentMethod(updatedData.getPaymentMethod());
+        if (updatedData.getStatus() != null) existing.setStatus(updatedData.getStatus());
+        if (updatedData.getTransactionReference() != null) existing.setTransactionReference(updatedData.getTransactionReference());
+        if (updatedData.getSale() != null) existing.setSale(updatedData.getSale());
+
+        paymentRepository.save(existing);
+    }
+
+    public void deletePayment(Long id) {
+        if (!paymentRepository.existsById(id)) {
+            throw new PaymentNotFoundException("Payment not found with id: " + id);
+        }
+        paymentRepository.deleteById(id);
+    }
+
+    private PaymentResponse mapToResponse(Payment payment) {
+        return new PaymentResponse(
+                payment.getId(),
+                payment.getSale().getId(),
+                payment.getAmount(),
+                payment.getPaymentDate(),
+                payment.getPaymentMethod().name(),
+                payment.getStatus().name(),
+                payment.getTransactionReference(),
+                payment.getCreatedAt(),
+                payment.getUpdatedAt()
+        );
     }
 }
-
-

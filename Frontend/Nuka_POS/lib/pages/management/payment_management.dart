@@ -47,7 +47,7 @@ class _PaymentsPageState extends State<PaymentsPage> {
                   return Card(
                     child: ListTile(
                       title: Text("Transaction #${payment['transactionId']}"),
-                      subtitle: Text("Amount Paid: \$${payment['amountPaid']}"),
+                      subtitle: Text("Amount Paid: \P${payment['amountPaid']}"),
                       trailing: Text(payment['method']),
                     ),
                   );
