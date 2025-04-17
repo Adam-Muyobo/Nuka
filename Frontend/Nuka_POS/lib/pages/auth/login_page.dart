@@ -21,10 +21,16 @@ class _LoginPageState extends State<LoginPage> {
   String? _errorMessage;
 
   Future<void> _login() async {
-    if (_emailController.text ==  "TestUser" && _passwordController.text == "password"){
+    if (_emailController.text ==  "adminUser@test.com" && _passwordController.text == "password"){
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const AdminDashboard()),
+      );
+    }
+    if (_emailController.text ==  "cashierUser@test.com" && _passwordController.text == "password"){
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const CashierDashboard()),
       );
     }
     if (!_formKey.currentState!.validate()) return;

@@ -1,17 +1,24 @@
 package com.nuka.nuka_pos.api.payment;
 
-import com.nuka.nuka_pos.api.payment.enums.PaymentMethod;
-import com.nuka.nuka_pos.api.payment.enums.PaymentStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PaymentResponse {
+
     private Long id;
-    private Long transactionId;
-    private PaymentMethod paymentMethod;
-    private PaymentStatus status;
+    private Long saleId;
+    private BigDecimal amount;
+    private LocalDateTime paymentDate;
+    private String paymentMethod;
+    private String status;
+    private String transactionReference;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

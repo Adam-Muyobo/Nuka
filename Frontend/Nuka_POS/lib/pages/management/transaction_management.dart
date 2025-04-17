@@ -45,8 +45,8 @@ class _TransactionManagementPageState extends State<TransactionManagementPage> {
                 final transaction = transactions[index];
                 return ListTile(
                   title: Text('Transaction #${index + 1}'),
-                  subtitle: Text('Total: \$${transaction['total']}'),
-                  trailing: Text('Tax: \$${transaction['tax']}'),
+                  subtitle: Text('Total: \P${transaction['total']}'),
+                  trailing: Text('Tax: \P${transaction['tax']}'),
                 );
               },
             ),
@@ -129,13 +129,13 @@ class _TransactionPopupState extends State<_TransactionPopup> {
               children: transactionItems
                   .map((item) => ListTile(
                 title: Text(item['product']),
-                subtitle: Text('Qty: ${item['quantity']} - \$${item['total']}'),
+                subtitle: Text('Qty: ${item['quantity']} - \P${item['total']}'),
               ))
                   .toList(),
             ),
           const SizedBox(height: 10),
-          Text('Total: \$${totalAmount.toStringAsFixed(2)}'),
-          Text('Tax (10%): \$${taxAmount.toStringAsFixed(2)}'),
+          Text('Total: \P${totalAmount.toStringAsFixed(2)}'),
+          Text('Tax (10%): \P${taxAmount.toStringAsFixed(2)}'),
         ],
       ),
       actions: [
