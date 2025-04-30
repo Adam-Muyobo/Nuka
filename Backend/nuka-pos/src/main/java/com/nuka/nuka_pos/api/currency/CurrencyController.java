@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * It provides endpoints for creating, updating, retrieving, and deleting currencies.
  */
 @RestController
-@RequestMapping("/api/secure/currencies")
+@RequestMapping("/api/currencies")
 public class CurrencyController {
 
     private final CurrencyService currencyService;
@@ -24,74 +24,62 @@ public class CurrencyController {
         this.currencyService = currencyService;
     }
 
-    /**
-     * Retrieves all currencies in the system.
-     *
-     * @return a list of currencies
-     */
     @GetMapping
     public ResponseEntity<List<CurrencyResponse>> getAllCurrencies() {
         List<Currency> currencies = currencyService.getAllCurrencies();
-        List<CurrencyResponse> currencyResponses = currencies.stream()
-                .map(currency -> new CurrencyResponse(currency.getId(), currency.getName(), currency.getSymbol()))
+        List<CurrencyResponse> responses = currencies.stream()
+                .map(c -> new CurrencyResponse(c.getId(), c.getName(), c.getSymbol(), c.getCountry()))
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(currencyResponses, HttpStatus.OK);
+        return ResponseEntity.ok(responses);
     }
 
-    /**
-     * Retrieves a currency by its ID.
-     *
-     * @param id the ID of the currency
-     * @return the currency details
-     */
     @GetMapping("/{id}")
     public ResponseEntity<CurrencyResponse> getCurrencyById(@PathVariable Long id) {
-        Currency currency = currencyService.getAllCurrencies()
-                .stream()
+        Currency currency = currencyService.getAllCurrencies().stream()
                 .filter(c -> c.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new CurrencyNotFoundException("Currency not found"));
 
-        CurrencyResponse response = new CurrencyResponse(currency.getId(), currency.getName(), currency.getSymbol());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        CurrencyResponse response = new CurrencyResponse(currency.getId(), currency.getName(), currency.getSymbol(), currency.getCountry());
+        return ResponseEntity.ok(response);
     }
 
-    /**
-     * Creates a new currency.
-     *
-     * @param currency the currency data to create
-     * @return the created currency
-     */
     @PostMapping
     public ResponseEntity<CurrencyResponse> createCurrency(@RequestBody Currency currency) {
-        Currency createdCurrency = currencyService.createCurrency(currency);
-        CurrencyResponse response = new CurrencyResponse(createdCurrency.getId(), createdCurrency.getName(), createdCurrency.getSymbol());
+        Currency created = currencyService.createCurrency(currency);
+        CurrencyResponse response = new CurrencyResponse(created.getId(), created.getName(), created.getSymbol(), created.getCountry());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    /**
-     * Updates an existing currency.
-     *
-     * @param id the ID of the currency to update
-     * @param currency the updated currency data
-     * @return the updated currency
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<CurrencyResponse> updateCurrency(@PathVariable Long id, @RequestBody Currency currency) {
-        Currency updatedCurrency = currencyService.updateCurrency(id, currency);
-        CurrencyResponse response = new CurrencyResponse(updatedCurrency.getId(), updatedCurrency.getName(), updatedCurrency.getSymbol());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    @PostMapping("/bulk")
+    public ResponseEntity<List<CurrencyResponse>> createCurrencies(@RequestBody List<Currency> currencies) {
+        List<Currency> createdList = currencyService.createMultipleCurrencies(currencies);
+        List<CurrencyResponse> responses = createdList.stream()
+                .map(c -> new CurrencyResponse(c.getId(), c.getName(), c.getSymbol(), c.getCountry()))
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(responses, HttpStatus.CREATED);
     }
 
-    /**
-     * Deletes a currency by its ID.
-     *
-     * @param id the ID of the currency to delete
-     * @return status response
-     */
+    @PutMapping("/{id}")
+    public ResponseEntity<CurrencyResponse> updateCurrency(@PathVariable Long id, @RequestBody Currency currency) {
+        Currency updated = currencyService.updateCurrency(id, currency);
+        CurrencyResponse response = new CurrencyResponse(updated.getId(), updated.getName(), updated.getSymbol(), updated.getCountry());
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCurrency(@PathVariable Long id) {
         currencyService.deleteCurrency(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/by-country/{country}")
+    public ResponseEntity<List<CurrencyResponse>> getCurrenciesByCountry(@PathVariable String country) {
+        List<Currency> currencies = currencyService.getCurrenciesByCountry(country);
+        List<CurrencyResponse> responses = currencies.stream()
+                .map(c -> new CurrencyResponse(c.getId(), c.getName(), c.getSymbol(), c.getCountry()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
     }
 }
+

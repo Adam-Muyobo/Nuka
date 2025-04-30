@@ -1,5 +1,6 @@
 package com.nuka.nuka_pos.api.auditlog;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,4 +49,10 @@ public class AuditLogController {
     public List<AuditLogResponse> getLogsByEntityName(@PathVariable String entityName) {
         return auditLogService.getLogsByEntityName(entityName);
     }
+
+    @PostMapping
+    public AuditLogResponse createAuditLog(@RequestBody @Valid AuditLogResponse request) {
+        return auditLogService.createLog(request);
+    }
+
 }

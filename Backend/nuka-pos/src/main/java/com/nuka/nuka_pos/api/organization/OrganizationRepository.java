@@ -8,11 +8,6 @@ import java.util.Optional;
  * Repository for accessing Organization data.
  */
 public interface OrganizationRepository extends JpaRepository<Organization, Long> {
-
     Organization findByCode(String organizationCode);
-
-    Optional<Organization> findByVerificationCode(String verificationCode);
-
-    boolean existsByEmail(String organizationEmail);
 }
 

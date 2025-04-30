@@ -1,8 +1,8 @@
 package com.nuka.nuka_pos.api.user;
 
-import com.nuka.nuka_pos.api.branch.Branch;
 import com.nuka.nuka_pos.api.organization.Organization;
-import com.nuka.nuka_pos.api.role.Role;
+import com.nuka.nuka_pos.api.branch.Branch;
+import com.nuka.nuka_pos.api.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,9 +56,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "organization_id", nullable = false)
     private Organization organization;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @Enumerated(EnumType.STRING)  // Updated to Enum
+    @Column(nullable = false)
+    private Role role;  // Updated to Role enum
 
     @ManyToOne
     @JoinColumn(name = "branch_id")
@@ -71,7 +71,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> role.getName()); // Simplified authority
+        return List.of(() -> role.name());  // Use enum name as authority
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.nuka.nuka_pos.api.user;
 
+import com.nuka.nuka_pos.api.user.dto.LoginRequest;
+import com.nuka.nuka_pos.api.user.dto.LoginResponse;
+import com.nuka.nuka_pos.api.user.enums.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,12 @@ public class UserController {
     public UserResponse getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
+
+    @GetMapping("/username/{username}")
+    public UserResponse getUserByUsername(@PathVariable String username) {
+        return userService.getUserByUsername(username);
+    }
+
 
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody User user) {
@@ -52,5 +61,17 @@ public class UserController {
     @GetMapping("/branch/{branchId}")
     public List<UserResponse> getUsersByBranch(@PathVariable Long branchId) {
         return userService.getUsersByBranch(branchId);
+    }
+
+    // New endpoint to get users by role and organization
+    @GetMapping("/role/{role}/organization/{organizationId}")
+    public List<UserResponse> getUsersByRoleAndOrganization(@PathVariable Role role, @PathVariable Long organizationId) {
+        return userService.getUsersByRoleAndOrganization(role, organizationId);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+        LoginResponse response = userService.login(request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

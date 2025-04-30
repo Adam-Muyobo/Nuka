@@ -33,6 +33,14 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductResponse> getProductsByOrganization(Long organizationId) {
+        return productRepository.findByOrganizationId(organizationId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+
     public void createProduct(Product product) {
         productRepository.save(product);
     }

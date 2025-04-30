@@ -59,6 +59,13 @@ public class ServiceService {
                 .collect(Collectors.toList());
     }
 
+    public List<ServiceResponse> getServicesByOrganization(Long organizationId) {
+        return serviceRepository.findByOrganizationId(organizationId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     private ServiceResponse mapToResponse(ServiceEntity service) {
         return new ServiceResponse(
                 service.getId(),

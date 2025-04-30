@@ -2,6 +2,9 @@ package com.nuka.nuka_pos.api.auditlog;
 
 import com.nuka.nuka_pos.api.auditlog.enums.AuditActionType;
 import com.nuka.nuka_pos.api.auditlog.exceptions.AuditLogNotFoundException;
+import com.nuka.nuka_pos.api.organization.OrganizationService;
+import com.nuka.nuka_pos.api.user.User;
+import com.nuka.nuka_pos.api.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +14,13 @@ import java.util.stream.Collectors;
 public class AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
+    private final UserService userService;
+    private final OrganizationService organizationService;
 
-    public AuditLogService(AuditLogRepository auditLogRepository) {
+    public AuditLogService(AuditLogRepository auditLogRepository, UserService userService,OrganizationService organizationService1) {
         this.auditLogRepository = auditLogRepository;
+        this.userService = userService;
+        this.organizationService = organizationService1;
     }
 
     public List<AuditLogResponse> getAllLogs() {
@@ -58,6 +65,22 @@ public class AuditLogService {
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
+
+    public AuditLogResponse createLog(AuditLogResponse request) {
+        AuditLog log = new AuditLog();
+        User user = userService.fetchUserById(request.getUserId());
+
+        log.setUser(user);
+        log.setOrganization(organizationService.fetchOrganizationById(request.getOrganizationId()));
+        log.setBranch(user.getBranch());
+        log.setAction(AuditActionType.valueOf(request.getAction().toUpperCase()));
+        log.setEntityName(request.getEntityName());
+        log.setMetadata(request.getMetadata());
+
+        AuditLog savedLog = auditLogRepository.save(log);
+        return mapToResponse(savedLog);
+    }
+
 
     private AuditLogResponse mapToResponse(AuditLog log) {
         return new AuditLogResponse(

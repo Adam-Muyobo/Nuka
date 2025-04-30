@@ -1,5 +1,7 @@
 package com.nuka.nuka_pos.api.organization;
 
+import com.nuka.nuka_pos.api.organization.enums.BusinessType;
+import com.nuka.nuka_pos.api.organization.enums.ReceiptMode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,14 +22,19 @@ public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
+
     @Column(nullable = false, unique = true)
     private String code;
+
     @Column(nullable = false, unique = true)
     private String email;
+
     @Column(nullable = false, unique = true)
     private String phone;
+
     @Column(nullable = false)
     private String country;
 
@@ -44,21 +51,19 @@ public class Organization {
     @Column(nullable = false)
     private ReceiptMode receiptMode;
 
+    @Column(nullable = false)
     private String taxNumber;
+
+    @Column()
     private String logoPath;
+
+    @Column()
     private Boolean isVerified;
 
+    @Column()
     private String verificationCode;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // Enum for BusinessType
-    public enum BusinessType {
-        RETAIL, SERVICE, WHOLESALE, MIXED
-    }
-
-    // Enum for ReceiptMode
-    public enum ReceiptMode {
-        EMAIL, PRINT, BOTH
-    }
 }

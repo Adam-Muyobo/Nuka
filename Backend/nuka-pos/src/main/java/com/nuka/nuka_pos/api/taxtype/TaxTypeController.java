@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
  * It provides endpoints for creating, updating, retrieving, and deleting tax types.
  */
 @RestController
-@RequestMapping("/api/secure/tax_types")
+@RequestMapping("/api/tax_types")
 public class TaxTypeController {
 
     private final TaxTypeService taxTypeService;
