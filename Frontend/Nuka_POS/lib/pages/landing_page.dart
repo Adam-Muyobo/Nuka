@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nuka_pos/pages/auth/login_page.dart';
-import 'package:nuka_pos/pages/auth/signup_page.dart';
+import 'package:nuka_pos/pages/auth/organization_signup_page.dart'; // Updated import
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -45,7 +45,6 @@ class LandingPage extends StatelessWidget {
                     // Login Button
                     ElevatedButton(
                       onPressed: () {
-                        // Navigate to Login Page
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -66,10 +65,9 @@ class LandingPage extends StatelessWidget {
                     // Signup Button
                     ElevatedButton(
                       onPressed: () {
-                        // Navigate to Signup Page
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const SignupPage()),
+                          MaterialPageRoute(builder: (context) => const OrganizationSignupPage()), // Updated route
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -84,7 +82,6 @@ class LandingPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    // Footer Section
                     const Padding(
                       padding: EdgeInsets.only(bottom: 20.0),
                       child: Text(

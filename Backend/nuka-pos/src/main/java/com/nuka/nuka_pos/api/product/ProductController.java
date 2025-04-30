@@ -46,4 +46,10 @@ public class ProductController {
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
     }
+
+    @GetMapping("/organization/{organizationId}")
+    public List<ProductResponse> getProductsByOrganization(@PathVariable Long organizationId) {
+        return productService.getProductsByOrganization(organizationId);
+    }
+
 }

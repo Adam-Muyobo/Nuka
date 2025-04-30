@@ -7,10 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * CurrencyService provides business logic for managing currencies.
- * It includes methods to create, update, delete, and retrieve currencies.
- */
 @Service
 public class CurrencyService {
 
@@ -21,22 +17,10 @@ public class CurrencyService {
         this.currencyRepository = currencyRepository;
     }
 
-    /**
-     * Retrieves all currencies.
-     *
-     * @return a list of all currencies
-     */
     public List<Currency> getAllCurrencies() {
         return currencyRepository.findAll();
     }
 
-    /**
-     * Creates a new currency.
-     *
-     * @param currency the currency to create
-     * @return the created currency
-     * @throws CurrencyAlreadyExistsException if the currency already exists
-     */
     public Currency createCurrency(Currency currency) {
         if (currencyRepository.existsByName(currency.getName())) {
             throw new CurrencyAlreadyExistsException("Currency with name " + currency.getName() + " already exists.");
@@ -44,32 +28,32 @@ public class CurrencyService {
         return currencyRepository.save(currency);
     }
 
-    /**
-     * Updates an existing currency.
-     *
-     * @param id the ID of the currency to update
-     * @param currency the updated currency data
-     * @return the updated currency
-     * @throws CurrencyNotFoundException if the currency is not found
-     */
+    public List<Currency> createMultipleCurrencies(List<Currency> currencies) {
+        for (Currency currency : currencies) {
+            if (currencyRepository.existsByName(currency.getName())) {
+                throw new CurrencyAlreadyExistsException("Currency with name " + currency.getName() + " already exists.");
+            }
+        }
+        return currencyRepository.saveAll(currencies);
+    }
+
     public Currency updateCurrency(Long id, Currency currency) {
         Currency existingCurrency = currencyRepository.findById(id)
                 .orElseThrow(() -> new CurrencyNotFoundException("Currency with ID " + id + " not found"));
         existingCurrency.setName(currency.getName());
         existingCurrency.setSymbol(currency.getSymbol());
+        existingCurrency.setCountry(currency.getCountry());
         return currencyRepository.save(existingCurrency);
     }
 
-    /**
-     * Deletes a currency by its ID.
-     *
-     * @param id the ID of the currency to delete
-     * @throws CurrencyNotFoundException if the currency is not found
-     */
     public void deleteCurrency(Long id) {
         if (!currencyRepository.existsById(id)) {
             throw new CurrencyNotFoundException("Currency with ID " + id + " not found");
         }
         currencyRepository.deleteById(id);
+    }
+
+    public List<Currency> getCurrenciesByCountry(String country) {
+        return currencyRepository.findByCountryIgnoreCase(country);
     }
 }

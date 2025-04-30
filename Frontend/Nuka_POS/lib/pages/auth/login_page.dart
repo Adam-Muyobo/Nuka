@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:nuka_pos/pages/auth/signup_page.dart';
+import 'package:nuka_pos/pages/auth/organization_signup_page.dart';
 import 'package:nuka_pos/pages/dashboards/admin_dashboard.dart';
 import 'package:nuka_pos/pages/dashboards/cashier_dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,24 +15,12 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
 
   Future<void> _login() async {
-    if (_emailController.text ==  "adminUser@test.com" && _passwordController.text == "password"){
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const AdminDashboard()),
-      );
-    }
-    if (_emailController.text ==  "cashierUser@test.com" && _passwordController.text == "password"){
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const CashierDashboard()),
-      );
-    }
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -40,27 +28,28 @@ class _LoginPageState extends State<LoginPage> {
       _errorMessage = null;
     });
 
-    const String apiUrl = 'http://localhost:8080/api/auth/login';
+    const String apiUrl = 'http://127.0.0.1:8080/api/users/login';
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'email': _emailController.text,
+        'username': _usernameController.text,
         'password': _passwordController.text,
       }),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final String token = data['token'];
-      final String role = data['role']; // Assume API returns 'ADMIN' or 'CASHIER'
+      final String role = data['role'];
+      final String username = data['username'];
+      final int userId = data['id'];
 
-      // Store token in local storage for future API requests
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', token);
+      await prefs.setString('username', username);
+      await prefs.setString('role', role);
+      await prefs.setInt('user_id', userId);
 
-      // Navigate based on user role
-      if (role == 'ADMIN') {
+      if (role == 'ADMIN' || role == 'ROOT_ADMIN') {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const AdminDashboard()),
@@ -73,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     } else {
       setState(() {
-        _errorMessage = 'Invalid email or password. Please try again.';
+        _errorMessage = 'Invalid username or password. Please try again.';
       });
     }
 
@@ -151,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20),
-            _buildTextField(_emailController, 'Email', Icons.email),
+            _buildTextField(_usernameController, 'Username', Icons.person),
             const SizedBox(height: 15),
             _buildTextField(_passwordController, 'Password', Icons.lock, obscureText: true),
             if (_errorMessage != null) ...[
@@ -184,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SignupPage()),
+                    MaterialPageRoute(builder: (context) => const OrganizationSignupPage()),
                   );
                 },
                 child: const Text(

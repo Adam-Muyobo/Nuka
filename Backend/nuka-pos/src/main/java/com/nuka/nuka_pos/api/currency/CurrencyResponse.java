@@ -16,4 +16,5 @@ public class CurrencyResponse {
     private Long id;
     private String name;
     private String symbol;
+    private String country;
 }

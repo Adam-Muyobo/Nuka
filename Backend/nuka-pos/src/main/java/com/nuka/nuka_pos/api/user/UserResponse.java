@@ -17,6 +17,6 @@ public class UserResponse {
     private Boolean isActive;
     private String createdAt;
     private Long organizationId;
-    private Long roleId;
+    private String role;  // Changed to String to hold the enum value
     private Long branchId;
 }

@@ -90,4 +90,9 @@ public class OrganizationService {
                 org.getCreatedAt().toString()
         );
     }
+
+    public Organization fetchOrganizationById(Long id) {
+        return organizationRepository.findById(id)
+                .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with id: " + id));
+    }
 }

@@ -41,6 +41,11 @@ public class ServiceController {
         serviceService.updateService(id, updatedData);
     }
 
+    @GetMapping("/organization/{organizationId}")
+    public List<ServiceResponse> getServicesByOrganization(@PathVariable Long organizationId) {
+        return serviceService.getServicesByOrganization(organizationId);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteService(@PathVariable Long id) {
